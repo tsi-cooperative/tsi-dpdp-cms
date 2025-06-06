@@ -1,0 +1,17 @@
+# TSI Accelerator Framework
+framework.db.host=jdbc:postgresql://localhost:5432
+framework.db.name=tsi_coop
+framework.db.user=postgres
+framework.db.password=India2050
+
+# Digitap
+digitap.apiurl=
+digitap.apikey=
+digitap.apisecret=
+
+digitap.pennydrop.apiurl=
+#digitap.pennydrop.apiurl=
+
+
+
+

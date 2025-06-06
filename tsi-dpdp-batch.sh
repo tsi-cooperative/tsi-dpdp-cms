@@ -1,0 +1,1 @@
+java -classpath WEB-INF/lib/postgresql-42.4.1.jar:tsi_coop.jar org.tsicoop.batch.DBSync /home/ubuntu/WEB-INF

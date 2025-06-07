@@ -60,19 +60,19 @@ public class InterceptingFilter implements Filter {
 
         if (apiRegistry.containsKey(servletPath.trim())) {
             StringTokenizer strTok = new StringTokenizer(servletPath, URL_DELIMITER);
-            strTok.nextToken(); // skip api keyword
+ //           strTok.nextToken(); // skip api keyword
             String uriIdentifier = strTok.nextToken();
-            if (!(uriIdentifier.equalsIgnoreCase(ADMIN_URI)||uriIdentifier.equalsIgnoreCase(APP_URI))){
+         /*   if (!(uriIdentifier.equalsIgnoreCase(ADMIN_URI)||uriIdentifier.equalsIgnoreCase(APP_URI))){
                 res.sendError(400);
                 return;
-            }
+            }*/
 
             // Check
              try {
-                 if(!servletPath.contains("api/app/login")
+                 /*if(!servletPath.contains("api/app/login")
                          && !servletPath.contains("api/app/register")) {
                      validheader = InputProcessor.processHeader(req, res);
-                 }
+                 }*/
                  if(!validheader) {
                      res.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
                  }else{

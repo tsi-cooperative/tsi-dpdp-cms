@@ -1,0 +1,10 @@
+{
+  "_func": "add_fiduciary",
+  "name": "TSI Coop Sandbox",
+  "contact_person": "SA",
+  "email": "a@b.com",
+  "phone": "123456789",
+  "domain": "sandbox.tsicoop.org",
+  "is_significant_data_fiduciary": false,
+  "dpb_registration_id": "ABCDEF"
+}

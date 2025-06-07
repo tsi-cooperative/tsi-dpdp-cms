@@ -8,6 +8,6 @@
 	
 <filter-mapping>
 	<filter-name>TSI_Accelerator</filter-name>
-	<url-pattern>/api/*</url-pattern>
+	<url-pattern>/*</url-pattern>
 </filter-mapping>
 </web-app>

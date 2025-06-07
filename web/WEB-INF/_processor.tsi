@@ -1,27 +1,7 @@
 # App Handlers
-/api/app/register=org.tsicoop.app.Register
-/api/app/onboard=org.tsicoop.app.Onboard
-/api/app/login=org.tsicoop.app.Login
-/api/app/post=org.tsicoop.app.Post
-/api/app/solution=org.tsicoop.app.Solution
-/api/app/service=org.tsicoop.app.Service
-/api/app/training=org.tsicoop.app.Training
-/api/app/org=org.tsicoop.app.Org
-/api/app/talent=org.tsicoop.app.Talent
-/api/app/enquiry=org.tsicoop.app.Enquiry
-/api/app/rfp=org.tsicoop.app.RFP
-/api/app/testimonial=org.tsicoop.app.Testimonial
-/api/app/job=org.tsicoop.app.Job
-/api/app/setting=org.tsicoop.app.Setting
-/api/app/document=org.tsicoop.app.Document
-/api/app/discussion=org.tsicoop.app.Discussion
-/api/app/lookup=org.tsicoop.app.Lookup
-/api/app/community=org.tsicoop.app.Community
-/api/app/meetup=org.tsicoop.app.Meetup
-/api/app/ambassador=org.tsicoop.app.Ambassador
-/api/app/notification=org.tsicoop.app.Notification
+/app/fiduciary=org.tsicoop.app.DataFiduciary
 
-# Admin Handlers
-/api/admin/dashboard=org.tsicoop.admin.Dashboard
-/api/admin/moderate=org.tsicoop.admin.Moderate
-/api/admin/account=org.tsicoop.admin.Account
+# API Handlers
+/api/admin/dashboard=org.tsicoop.app.Dashboard
+/api/admin/moderate=org.tsicoop.app.Moderate
+/api/admin/account=org.tsicoop.app.Account

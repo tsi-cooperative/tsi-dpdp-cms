@@ -162,7 +162,7 @@ public class DBSync{
             // insert admin user `
             buff = new StringBuffer();
             String userId = UUID.randomUUID().toString();
-            buff.append("INSERT INTO _user (user_id,role_id,username,email,password_hash) SELECT '"+userId+"','"+roleId+"','Satish Ayyaswami','admin@tsicoop.org','' WHERE NOT EXISTS (SELECT email FROM _user WHERE email='admin@tsicoop.org')");
+            buff.append("INSERT INTO _user (user_id,role_id,username,email,password_hash) SELECT '"+userId+"','"+roleId+"','Satish Ayyaswami','admin@tsicoop.org','218e9a551b1fb8706ef5205845401b584f82cee4b78079e8840b9174a61745e3' WHERE NOT EXISTS (SELECT email FROM _user WHERE email='admin@tsicoop.org')");
             pstmt = con.prepareStatement(buff.toString());
             pstmt.executeUpdate();
 

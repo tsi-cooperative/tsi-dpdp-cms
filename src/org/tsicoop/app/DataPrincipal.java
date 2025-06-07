@@ -1,11 +1,11 @@
-package org.tsicoop.admin;
+package org.tsicoop.app;
 
 import org.tsicoop.framework.REST;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class ConsentManager implements REST {
+public class DataPrincipal implements REST {
     @Override
     public void get(HttpServletRequest req, HttpServletResponse res) {
 

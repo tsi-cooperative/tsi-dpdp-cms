@@ -1,4 +1,4 @@
-package org.tsicoop.api;
+package org.tsicoop.app;
 
 import org.tsicoop.framework.REST;
 

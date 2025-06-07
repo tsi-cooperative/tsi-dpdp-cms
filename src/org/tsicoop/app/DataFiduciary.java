@@ -33,12 +33,7 @@ public class DataFiduciary implements REST {
             func = (String) input.get(FUNCTION);
             if(func != null){
                 if(func.equalsIgnoreCase(ADD_FIDUCIARY)){
-                      boolean added = addFiduciary(input);
-                      output = new JSONObject();
-                      if(added)
-                          output.put("_added",true);
-                      else
-                          output.put("_added",false);
+                      output = addFiduciary(input);
                 }
             }
             if(outputArray != null)
@@ -51,7 +46,8 @@ public class DataFiduciary implements REST {
         }
     }
 
-    protected boolean addFiduciary(JSONObject input) throws Exception{
+    protected JSONObject addFiduciary(JSONObject input){
+        JSONObject output = new JSONObject();
         boolean created = false;
         DBQuery query = null;
         String name = (String) input.get("name");
@@ -61,23 +57,32 @@ public class DataFiduciary implements REST {
         String domain = (String) input.get("domain");
         boolean is_significant_data_fiduciary = (boolean) input.get("is_significant_data_fiduciary");
         String dpb_registration_id = (String) input.get("dpb_registration_id");
-
         UUID dfuuid = UUID.randomUUID();
-        Connection conn = new PoolDB().getConnection();
-        String sql = "INSERT INTO _data_fiduciary (fiduciary_id,name,contact_person,email,phone,domain,is_significant_data_fiduciary,dpb_registration_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setObject(1, dfuuid);
-        pstmt.setString(2, name);
-        pstmt.setString(3, contact_person);
-        pstmt.setString(4, email);
-        pstmt.setString(5, phone);
-        pstmt.setString(6, domain);
-        pstmt.setBoolean(7, is_significant_data_fiduciary);
-        pstmt.setString(8, dpb_registration_id);
-        pstmt.executeUpdate();
+        try {
+            Connection conn = new PoolDB().getConnection();
+            String sql = "INSERT INTO _data_fiduciary (fiduciary_id,name,contact_person,email,phone,domain,is_significant_data_fiduciary,dpb_registration_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setObject(1, dfuuid);
+            pstmt.setString(2, name);
+            pstmt.setString(3, contact_person);
+            pstmt.setString(4, email);
+            pstmt.setString(5, phone);
+            pstmt.setString(6, domain);
+            pstmt.setBoolean(7, is_significant_data_fiduciary);
+            pstmt.setString(8, dpb_registration_id);
+            pstmt.executeUpdate();
+            created = true;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 
-        created = true;
-        return created;
+        if(created) {
+            output.put("_added", true);
+            output.put("fiduciary_id",dfuuid.toString());
+        }else {
+            output.put("_added", false);
+        }
+        return output;
     }
 
     @Override

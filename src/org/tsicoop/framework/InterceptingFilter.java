@@ -1,8 +1,5 @@
 package org.tsicoop.framework;
 
-import org.tsicoop.app.Notification;
-import org.tsicoop.common.Constants;
-import org.tsicoop.common.Masters;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -87,10 +84,10 @@ public class InterceptingFilter implements Filter {
 
                      //System.out.println("c:"+req.getParameter(Constants.NOTIF_PARAM));
                      // Check notification
-                     if(req.getParameter(Constants.NOTIF_PARAM)!=null){
+                   /*  if(req.getParameter(Constants.NOTIF_PARAM)!=null){
                          String notifuuid = req.getParameter(Constants.NOTIF_PARAM);
                          new Notification().readNotification(notifuuid);
-                     }
+                     }*/
 
                      REST action = ((REST) Class.forName(classname).getConstructor().newInstance());
                      validrequest = action.validate(method, req, res);
@@ -124,17 +121,7 @@ public class InterceptingFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         SystemConfig.load(filterConfig.getServletContext());
         JSONSchemaValidator.createInstance(filterConfig.getServletContext());
-        try {
-            String[] solutionMasterList = Masters.getSolutionList();
-            String[] serviceMasterList = Masters.getServiceList();
-            String[] trainingMasterList = Masters.getTrainingList();
-            String[] skillMasterList = Masters.getSkillList();
-            String[] txyMasterList = Masters.getTaxonomiesList();
-            Masters.loadLookup();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
         System.out.println("Loaded Masters");
-        System.out.println("TSI Coop Service started in "+System.getenv("TSI_COOP_ENV")+" environment");
+        System.out.println("TSI DPDP CMS Service started in "+System.getenv("TSI_COOP_ENV")+" environment");
     }
 }

@@ -1,6 +1,6 @@
 # TSI Accelerator Framework
-framework.db.host=jdbc:postgresql://localhost:5432
-framework.db.name=tsi_coop
+framework.db.host=jdbc:postgresql://localhost:5433
+framework.db.name=tsi_dpdp_cms
 framework.db.user=postgres
 framework.db.password=India2050
 

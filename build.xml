@@ -1,0 +1,49 @@
+<?xml version="1.0" ?> 
+<project name="TSI_DPDP_CMS" default="build">
+
+	<path id="compile.classpath">
+		<fileset dir="lib">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+	
+	<target name="init" depends="clean">
+		<mkdir dir="build/classes"/>
+		<mkdir dir="dist" />
+	</target>
+
+	<target name="compile" depends="init" >
+		<javac destdir="build/classes" debug="true" srcdir="src">
+			<classpath refid="compile.classpath"/>
+		</javac>
+		<jar destfile = "build/tsi_dpdp_cms.jar"
+			 basedir = "build/classes">
+		</jar>
+		<copy file="build/tsi_dpdp_cms.jar" tofile="dist/tsi_dpdp_cms.jar"></copy>
+	</target>
+
+	<target name="war" depends="compile">
+		<war destfile="dist/tsi_dpdp_cms.war" webxml="web/WEB-INF/web.xml">
+			<fileset dir="web"/>
+			<lib dir="lib"/>
+			<classes dir="build/classes"/>
+		</war>
+		<delete dir="build" />
+	</target>
+			
+	<target name="server" description="Jetty runner" depends="war">
+	     <exec executable="java">
+	       <arg line="-jar tools/jetty-runner-10.0.11.jar" />
+	       <arg line="--port 8085 dist/tsi_dpdp_cms.war" />
+	     </exec>
+	</target>
+
+	<target name="build" depends="war">		
+	</target>
+	
+	<target name="clean">
+		<delete dir="dist" />
+		<delete dir="build" />
+	</target>
+	
+</project>

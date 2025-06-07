@@ -4,8 +4,6 @@ import com.networknt.schema.ValidationMessage;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.tsicoop.common.Constants;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
@@ -122,18 +120,6 @@ public class InputProcessor {
         return city;
     }
 
-    public static String getAccountSlug(HttpServletRequest req){
-        String accountSlug = null;
-        String accountType = InputProcessor.getAccountType(req);
-        String email = InputProcessor.getEmail(req);
-        if(accountType.equalsIgnoreCase(Constants.PROFESSIONAL_ACCOUNT_TYPE) || accountType.equalsIgnoreCase(Constants.AMBASSADOR_ACCOUNT_TYPE)) {
-            accountSlug = email;
-        }else{
-            accountSlug = email.substring(email.indexOf("@")+1);
-        }
-
-        return accountSlug;
-    }
 
     public static JSONObject getAuthToken(HttpServletRequest req, HttpServletResponse res) throws Exception{
         JSONObject tokenDetails = null;

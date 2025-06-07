@@ -2,11 +2,12 @@ package org.tsicoop.framework;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.tsicoop.common.Constants;
 
 import java.security.SecureRandom;
 
 public class Email {
+
+    public static String PRODUCTION_ENVT = "production";
 
     public static String API_HOST = "https://api.zeptomail.com/v1.1/email";
     public static String AUTH_KEY = "Zoho-enczapikey wSsVR61/+xT0WK11zjb/ce0wmwlcBFnxR0l+3wSh4nWvHPnB9MdtkUzOBgeuGqVNGW9oEDpErLkrkB4AhDNYh4glzlBSCiiF9mqRe1U4J3x17qnvhDzDXGhVlxqLK4INww5om2lnG8gl+g==";
@@ -34,7 +35,7 @@ public class Email {
     }
 
     public static void sendOTP(String email, String otp){
-        if(System.getenv("TSI_COOP_ENV") != null && System.getenv("TSI_COOP_ENV").equalsIgnoreCase(Constants.PRODUCTION_ENVT)) {
+        if(System.getenv("TSI_COOP_ENV") != null && System.getenv("TSI_COOP_ENV").equalsIgnoreCase(PRODUCTION_ENVT)) {
             String subject = "Your Login OTP";
             StringBuffer buff = new StringBuffer();
             buff.append("<p>The OTP for logging into your TSI Coop account is "+otp+". It is valid for 5 minutes.</p>");
@@ -56,7 +57,7 @@ public class Email {
 
     public static String generate4DigitOTP() {
         String otpS = null;
-        if(System.getenv("TSI_COOP_ENV") != null && System.getenv("TSI_COOP_ENV").equalsIgnoreCase(Constants.PRODUCTION_ENVT)) {
+        if(System.getenv("TSI_COOP_ENV") != null && System.getenv("TSI_COOP_ENV").equalsIgnoreCase(PRODUCTION_ENVT)) {
             SecureRandom random = new SecureRandom();
             int otp = 1000 + random.nextInt(9000); // Generates a number between 1000 (inclusive) and 9999 (inclusive)
             otpS = String.valueOf(otp);

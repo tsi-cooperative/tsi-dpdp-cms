@@ -39,7 +39,7 @@ public class DBSync{
             DBSync sync = new DBSync();
             sync.syncSchema(configProps, schemaProps);
 
-           // sync.loadAdminAccount(configProps);
+            sync.loadAdminAccount(configProps);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -154,17 +154,24 @@ public class DBSync{
 
             // insert admin role
             buff = new StringBuffer();
-            buff.append("INSERT INTO _user(account_slug,org_name,account_type,start_year,industry_slug,state_slug,city_slug,latitude,longitude) SELECT 'tsicoop.org', 'TSI TECH SOLUTIONS COOP FOUNDATION','ADMIN',2024,'IT','TN','Coimbatore',0,0 WHERE NOT EXISTS (SELECT account_slug FROM _organization_account WHERE account_slug='tsicoop.org')");
+            String roleId = UUID.randomUUID().toString();
+            buff.append("INSERT INTO _role(role_id,name,description) SELECT '"+roleId+"','ADMIN','' WHERE NOT EXISTS (SELECT name FROM _role WHERE name='ADMIN')");
             pstmt = con.prepareStatement(buff.toString());
             pstmt.executeUpdate();
 
             // insert admin user `
             buff = new StringBuffer();
-            buff.append("INSERT INTO _USER (name,role_slug,email,mobile,account_type,account_slug) SELECT 'Satish Ayyaswami','SYSADMIN','admin@tsicoop.org','9940161886','ADMIN','tsicoop.org' WHERE NOT EXISTS (SELECT email FROM _user WHERE email='admin@tsicoop.org')");
+            String userId = UUID.randomUUID().toString();
+            buff.append("INSERT INTO _user (user_id,role_id,username,email,password_hash) SELECT '"+userId+"','"+roleId+"','Satish Ayyaswami','admin@tsicoop.org','' WHERE NOT EXISTS (SELECT email FROM _user WHERE email='admin@tsicoop.org')");
             pstmt = con.prepareStatement(buff.toString());
             pstmt.executeUpdate();
 
-            //con.commit();
+            // insert consent manager`
+            buff = new StringBuffer();
+            String cmId = UUID.randomUUID().toString();
+            buff.append("INSERT INTO _consent_manager (cm_id,name,cname,domain,dns_txt_record_token) SELECT '"+cmId+"','TSI Consent Manager','cms','tsicoop.org','abc' WHERE NOT EXISTS (SELECT domain FROM _consent_manager WHERE domain='tsicoop.org')");
+            pstmt = con.prepareStatement(buff.toString());
+            pstmt.executeUpdate();
         } finally {
             BatchDB.close(stmt);
             BatchDB.close(con);

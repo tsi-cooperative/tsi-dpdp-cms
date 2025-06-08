@@ -36,8 +36,7 @@ public class Policy implements REST {
             func = (String) input.get(FUNCTION);
             if(func != null){
                 if(func.equalsIgnoreCase(ADD_POLICY)){
-                    String fiduciaryId = req.getParameter("fid");
-                    output = addPolicy(input,fiduciaryId);
+                    output = addPolicy(input);
                 }
             }
             if(outputArray != null)
@@ -50,10 +49,11 @@ public class Policy implements REST {
         }
     }
 
-    protected JSONObject addPolicy(JSONObject input, String fiduciaryId){
+    protected JSONObject addPolicy(JSONObject input){
         JSONObject output = new JSONObject();
         boolean created = false;
         DBQuery query = null;
+        String fiduciaryId = (String) input.get("fiduciary_id");
         String name = (String) input.get("name");
         String version = (String) input.get("version");
         String effective_date = (String) input.get("effective_date");

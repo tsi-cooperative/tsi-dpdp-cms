@@ -3,6 +3,6 @@
 /app/policy=org.tsicoop.app.Policy
 
 # API Handlers
-/api/admin/dashboard=org.tsicoop.app.Dashboard
-/api/admin/moderate=org.tsicoop.app.Moderate
-/api/admin/account=org.tsicoop.app.Account
+/api/policy=org.tsicoop.api.Policy
+/api/consent=org.tsicoop.api.Consent
+

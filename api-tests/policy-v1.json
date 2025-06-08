@@ -1,8 +1,9 @@
 {
-  "policy_id": "tsi_coop_policy",
+  "_func": "add_policy",
+  "name": "tsi_coop_policy",
   "version": "1.0",
-  "effective_date": "2025-06-03T00:00:00Z",
-  "last_updated": "2025-06-03T07:30:00Z",
+  "effective_date": "2025-06-03 00:00:00",
+  "last_updated": "2025-06-03 07:30:00",
   "jurisdiction": "IN",
   "data_fiduciary_info": {
     "name": "TSI Coop",

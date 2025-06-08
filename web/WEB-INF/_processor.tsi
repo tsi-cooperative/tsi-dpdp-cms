@@ -1,5 +1,6 @@
 # App Handlers
 /app/fiduciary=org.tsicoop.app.DataFiduciary
+/app/policy=org.tsicoop.app.Policy
 
 # API Handlers
 /api/admin/dashboard=org.tsicoop.app.Dashboard

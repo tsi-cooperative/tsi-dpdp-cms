@@ -5,11 +5,10 @@ const configEl = document.getElementById("config-data");
 const config = JSON.parse(configEl.textContent);
 console.log(config.tsi_dpdp_cms_fiduciarykey);
 console.log(config.tsi_dpdp_cms_policykey);
-const CONSENT_LOCAL_STORAGE_KEY = 'tsi_coop_user_consent';
-const CONSENT_EXPIRY_DAYS = 365; // Consent expires after 1 year
-const API_BASE_URL = 'http://localhost:8085'; // Your backend API URL (e.g., from DPDP Solution)
-//const POLICY_API_ENDPOINT = 'http://localhost:8085/api/policy?policy_id=093b9a9e-b739-40c6-9fed-6ae190fbea70&fiduciary_id=bfa42245-214a-45e3-bdb4-53c34404bc62';
-const POLICY_API_ENDPOINT = `http://localhost:8085/api/policy?policy_id=${config.tsi_dpdp_cms_policykey}&fiduciary_id=${config.tsi_dpdp_cms_fiduciarykey}`;
+const CONSENT_LOCAL_STORAGE_KEY = `${config.tsi_dpdp_cms_localstoragekey}`;
+const CONSENT_EXPIRY_DAYS = `${config.tsi_dpdp_cms_consentexpiry}`; // Consent expires after 1 year
+const API_BASE_URL = `${config.tsi_dpdp_cms_apibaseurl}`; // Your backend API URL (e.g., from DPDP Solution)
+const POLICY_API_ENDPOINT = `${API_BASE_URL}/api/policy?policy_id=${config.tsi_dpdp_cms_policykey}&fiduciary_id=${config.tsi_dpdp_cms_fiduciarykey}`;
 
 let currentPolicy = null; // Stores the fetched policy JSON
 let currentLanguageContent = null; // Stores content for the detected language

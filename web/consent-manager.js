@@ -1,0 +1,398 @@
+// consent-manager.js
+
+// --- Configuration & Constants ---
+const configEl = document.getElementById("config-data");
+const config = JSON.parse(configEl.textContent);
+console.log(config.tsi_dpdp_cms_fiduciarykey);
+console.log(config.tsi_dpdp_cms_policykey);
+const CONSENT_LOCAL_STORAGE_KEY = 'tsi_coop_user_consent';
+const CONSENT_EXPIRY_DAYS = 365; // Consent expires after 1 year
+const API_BASE_URL = 'http://localhost:8085'; // Your backend API URL (e.g., from DPDP Solution)
+//const POLICY_API_ENDPOINT = 'http://localhost:8085/api/policy?policy_id=093b9a9e-b739-40c6-9fed-6ae190fbea70&fiduciary_id=bfa42245-214a-45e3-bdb4-53c34404bc62';
+const POLICY_API_ENDPOINT = `http://localhost:8085/api/policy?policy_id=${config.tsi_dpdp_cms_policykey}&fiduciary_id=${config.tsi_dpdp_cms_fiduciarykey}`;
+
+let currentPolicy = null; // Stores the fetched policy JSON
+let currentLanguageContent = null; // Stores content for the detected language
+let consentCategoriesConfig = {}; // Map of purpose_id to its policy config (name, desc, mandatory etc.)
+
+// --- DOM Elements ---
+const cookieBanner = document.getElementById('cookie-consent-banner');
+const preferenceCenterOverlay = document.getElementById('preference-center-overlay');
+const preferenceCenterContent = preferenceCenterOverlay.querySelector('.preference-center-content');
+const savePreferencesBtn = document.getElementById('save-preferences');
+const openCookieSettingsLink = document.getElementById('open-cookie-settings');
+
+
+
+// --- Helper Functions ---
+
+/**
+ * Detects user's preferred language from browser or default to English.
+ * @returns {string} Language code (e.g., 'en', 'ta', 'hi').
+ */
+function getPreferredLanguage() {
+    const lang = document.documentElement.lang || navigator.language || navigator.userLanguage;
+    const availableLangs = Object.keys(currentPolicy.languages);
+    
+    // Check for exact match or base language match
+    if (availableLangs.includes(lang.toLowerCase())) return lang.toLowerCase();
+    if (availableLangs.includes(lang.split('-')[0].toLowerCase())) return lang.split('-')[0].toLowerCase();
+    
+    // Default to English if no match, or first available language
+    return availableLangs.includes('en') ? 'en' : availableLangs[0];
+}
+
+/**
+ * Fetches the active consent policy from the backend.
+ * @returns {Promise<Object>} The policy JSON.
+ */
+async function fetchConsentPolicy() {
+    try {
+        const response = await fetch(POLICY_API_ENDPOINT);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch policy: ${response.statusText}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching consent policy:", error);
+        // Fallback: Use a very basic, hardcoded policy or show an error
+        return null; // Handle this gracefully in initConsentManager
+    }
+}
+
+/**
+ * Gets consent state from local storage.
+ * @returns {Object|null} Current consent preferences or null if not found/expired.
+ */
+function getConsentState() {
+    try {
+        const stored = localStorage.getItem(CONSENT_LOCAL_STORAGE_KEY);
+        if (stored) {
+            const consentData = JSON.parse(stored);
+            const now = new Date();
+            const expiryDate = new Date(consentData.timestamp);
+            expiryDate.setDate(expiryDate.getDate() + CONSENT_EXPIRY_DAYS);
+
+            if (now < expiryDate && consentData.policyVersion === currentPolicy.version) {
+                return consentData.preferences;
+            } else {
+                console.log('Consent expired or policy version changed. Re-prompting.');
+                localStorage.removeItem(CONSENT_LOCAL_STORAGE_KEY); // Clear expired/old consent
+                return null;
+            }
+        }
+    } catch (e) {
+        console.error("Failed to parse consent from local storage:", e);
+        localStorage.removeItem(CONSENT_LOCAL_STORAGE_KEY); // Clear corrupt data
+    }
+    return null;
+}
+
+/**
+ * Saves consent state to local storage and invokes backend.
+ * @param {Object} preferences - Object like {purpose_id: true/false, ...}
+ * @param {string} mechanism - How consent was given (e.g., 'accept_all_banner', 'save_preferences_center')
+ */
+async function saveConsentState(preferences, mechanism) {
+    const consentData = {
+        preferences: preferences,
+        timestamp: new Date().toISOString(),
+        mechanism: mechanism,
+        policyVersion: currentPolicy.version,
+        policyId: currentPolicy.policy_id
+    };
+    localStorage.setItem(CONSENT_LOCAL_STORAGE_KEY, JSON.stringify(consentData));
+    console.log('Consent saved to local storage:', preferences);
+
+    // Invoke backend API to store consent log
+    await invokeBackendConsentAPI(preferences, mechanism);
+
+    applyConsent(preferences); // Apply the changes to the scripts
+    cookieBanner.style.display = 'none'; // Hide banner
+}
+
+/**
+ * Makes an API call to the backend to log the consent decision.
+ * @param {Object} preferences - The user's chosen preferences.
+ * @param {string} mechanism - The method by which consent was given.
+ */
+async function invokeBackendConsentAPI(preferences, mechanism) {
+    // This user ID should come from your actual user authentication system
+    // For a non-logged-in user, you might use a cookie ID or generate a temporary one.
+    const userId = localStorage.getItem('tsi_coop_user_id') || `anon_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+    localStorage.setItem('tsi_coop_user_id', userId); // Persist anon ID if generated
+
+    const consentPayload = {
+        _func:'record_consent',
+        user_id: userId,
+        fiduciary_id: currentPolicy.data_fiduciary_info.id || 'bfa42245-214a-45e3-bdb4-53c34404bc62', // Ensure your policy JSON has Fiduciary ID
+        policy_id: currentPolicy.policy_id || '093b9a9e-b739-40c6-9fed-6ae190fbea70',
+        policy_version: currentPolicy.version,
+        timestamp: new Date().toISOString(),
+        jurisdiction: currentPolicy.jurisdiction || 'IN',
+        language_selected: currentLanguageContent.langCode || 'en',
+        consent_status_general: Object.values(preferences).every(p => p === true) ? 'granted_all' : (Object.values(preferences).every(p => p === false || (consentCategoriesConfig[Object.keys(preferences).find(key => preferences[key])].is_mandatory_for_service)) ? 'denied_non_essential' : 'custom'),
+        consent_mechanism: mechanism,
+        ip_address: null, // Backend should capture this from request
+        user_agent: navigator.userAgent,
+        data_point_consents: Object.keys(preferences).map(purposeId => ({
+            data_point_id: purposeId, // Using purposeId as data_point_id
+            consent_granted: preferences[purposeId],
+            purpose_agreed_to: currentLanguageContent.data_processing_purposes.find(p => p.id === purposeId)?.name || purposeId, // Link to actual purpose name
+            timestamp_updated: new Date().toISOString()
+        })),
+        is_active_consent: true // Always true for the latest consent submitted
+    };
+    console.log(consentPayload);
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/consent`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // Add API Key or Authorization header if your backend requires it
+                // 'X-API-KEY': 'YOUR_TSI_API_KEY'
+            },
+            body: JSON.stringify(consentPayload)
+        });
+        if (response.ok) {
+            console.log('Consent log successfully sent to backend!');
+        } else {
+            const errorData = await response.json();
+            console.error('Failed to send consent log to backend:', response.status, errorData);
+        }
+    } catch (error) {
+        console.error('Network error while sending consent log to backend:', error);
+    }
+}
+
+/**
+ * Activates or deactivates scripts based on consent preferences.
+ * This function iterates through scripts with data-consent-category and enables/disables them.
+ * @param {Object} preferences - The current consent preferences (purposeId: boolean).
+ */
+function applyConsent(preferences) {
+    document.querySelectorAll('script[type="text/plain"][data-consent-category]').forEach(scriptTag => {
+        const category = scriptTag.dataset.consentCategory;
+        if (preferences[category]) {
+            // Check if it's already active (type="text/javascript") to avoid re-execution
+            if (scriptTag.type !== 'text/javascript') {
+                scriptTag.type = 'text/javascript'; // Change type to activate
+                const newScript = document.createElement('script');
+                Array.from(scriptTag.attributes).forEach(attr => {
+                    if (attr.name !== 'type') {
+                        newScript.setAttribute(attr.name, attr.value);
+                    }
+                });
+                newScript.text = scriptTag.text;
+                if (scriptTag.src) {
+                    newScript.src = scriptTag.src;
+                    newScript.onload = () => console.log(`External script for ${category} loaded.`);
+                    newScript.onerror = (e) => console.error(`Failed to load external script for ${category}:`, e);
+                }
+                scriptTag.parentNode.replaceChild(newScript, scriptTag);
+                console.log(`Script for purpose "${category}" activated.`);
+            }
+        } else {
+            // Keep it inactive (type="text/plain")
+            console.log(`Script for purpose "${category}" remains inactive.`);
+        }
+    });
+}
+
+/**
+ * Dynamically renders the cookie banner content from the fetched policy.
+ */
+function renderCookieBanner() {
+    if (!currentLanguageContent || !cookieBanner) return;
+
+    cookieBanner.innerHTML = `
+        <p>${currentLanguageContent.description} For more details, see our <a href="${currentLanguageContent.links.privacy_policy_url}" target="_blank" style="color: white; text-decoration: underline;">${currentLanguageContent.links.privacy_policy_text}</a>.</p>
+        <div class="button-group">
+            <button id="accept-all-cookies">${currentLanguageContent.buttons.accept_all}</button>
+            <button id="reject-all-cookies">${currentLanguageContent.buttons.reject_all_non_essential}</button>
+            <button id="manage-preferences">${currentLanguageContent.buttons.manage_preferences}</button>
+        </div>
+    `;
+
+    // Re-attach event listeners as innerHTML overwrites them
+    document.getElementById('accept-all-cookies').addEventListener('click', handleAcceptAll);
+    document.getElementById('reject-all-cookies').addEventListener('click', handleRejectAll);
+    document.getElementById('manage-preferences').addEventListener('click', handleManagePreferences);
+}
+
+/**
+ * Dynamically renders the preference center content from the fetched policy.
+ */
+function renderPreferenceCenter() {
+    if (!currentLanguageContent || !preferenceCenterContent) return;
+
+    let categoriesHtml = `
+        <button style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.5em; cursor: pointer; color: #555;" onclick="document.getElementById('preference-center-overlay').style.display='none';">&times;</button>
+        <h2>${currentLanguageContent.title}</h2>
+        <p>${currentLanguageContent.general_purpose_description}</p>
+        <p>${currentLanguageContent.important_note}</p>
+        <div style="margin-top: 20px;">
+    `;
+
+    currentLanguageContent.data_processing_purposes.forEach(purpose => {
+        const isMandatory = purpose.is_mandatory_for_service;
+        const toggleId = `toggle-${purpose.id}`;
+        const dataCategoriesNames = purpose.data_categories_involved
+            .map(catId => {
+                const cat = currentLanguageContent.data_categories_details.find(d => d.id === catId);
+                return cat ? cat.name : catId; // Fallback to ID if not found
+            })
+            .join(', ');
+        const thirdPartiesNames = purpose.recipients_or_third_parties && purpose.recipients_or_third_parties.length > 0
+            ? purpose.recipients_or_third_parties.join(', ')
+            : currentLanguageContent.not_applicable || 'N/A';
+
+        categoriesHtml += `
+            <div class="category" data-category="${purpose.id}">
+                <h3>${purpose.name}
+                    ${isMandatory ? `<span style="color: #28a745; font-size: 0.8em; margin-left: 10px;">(${currentLanguageContent.mandatory_label || 'Mandatory for Service'})</span>` : `
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="${toggleId}">
+                        <span class="slider"></span>
+                    </label>
+                    `}
+                </h3>
+                <p>${purpose.description}</p>
+                <div class="details">
+                    <strong>${currentLanguageContent.legal_basis_label || 'Legal Basis:'}</strong> ${purpose.legal_basis}<br>
+                    <strong>${currentLanguageContent.data_categories_label || 'Data Categories:'}</strong> ${dataCategoriesNames}<br>
+                    <strong>${currentLanguageContent.third_parties_label || 'Third Parties:'}</strong> ${thirdPartiesNames}<br>
+                    <strong>${currentLanguageContent.retention_label || 'Retention:'}</strong> ${purpose.retention_period}<br>
+                </div>
+            </div>
+        `;
+    });
+
+    categoriesHtml += `</div>`; // Close categories container
+    preferenceCenterContent.innerHTML = categoriesHtml;
+
+    // Append footer buttons (if not already there from HTML)
+    let footerButtonsDiv = preferenceCenterContent.querySelector('.footer-buttons');
+    if (!footerButtonsDiv) {
+        footerButtonsDiv = document.createElement('div');
+        footerButtonsDiv.className = 'footer-buttons';
+        footerButtonsDiv.innerHTML = `<button id="save-preferences">${currentLanguageContent.buttons.save_preferences}</button>`;
+        preferenceCenterContent.appendChild(footerButtonsDiv);
+        document.getElementById('save-preferences').addEventListener('click', handleSavePreferences);
+    }
+}
+
+
+/**
+ * Initializes the preference center checkboxes based on current preferences.
+ * @param {Object} currentPreferences - The user's current consent preferences.
+ */
+function initPreferenceCenter(currentPreferences) {
+    currentLanguageContent.data_processing_purposes.forEach(purpose => {
+        const toggle = document.getElementById(`toggle-${purpose.id}`);
+        if (toggle) {
+            if (purpose.is_mandatory_for_service) {
+                toggle.checked = true; // Essential always checked
+                toggle.disabled = true; // Cannot be unchecked
+            } else {
+                // Set based on saved preference, defaulting to false if not found
+                toggle.checked = currentPreferences[purpose.id] !== undefined ? currentPreferences[purpose.id] : false;
+                toggle.disabled = false;
+            }
+        }
+    });
+}
+
+// --- Event Handlers ---
+
+const handleAcceptAll = () => {
+    const preferences = {};
+    currentLanguageContent.data_processing_purposes.forEach(purpose => {
+        preferences[purpose.id] = true; // Grant consent for all
+    });
+    saveConsentState(preferences, 'accept_all_banner');
+};
+
+const handleRejectAll = () => {
+    const preferences = {};
+    currentLanguageContent.data_processing_purposes.forEach(purpose => {
+        preferences[purpose.id] = purpose.is_mandatory_for_service; // Grant only mandatory
+    });
+    saveConsentState(preferences, 'reject_all_banner');
+};
+
+const handleManagePreferences = () => {
+    const currentPreferences = getConsentState() || {};
+    // Ensure all purposes have a default if not found in stored consent
+    currentLanguageContent.data_processing_purposes.forEach(purpose => {
+        if (currentPreferences[purpose.id] === undefined) {
+             currentPreferences[purpose.id] = purpose.is_mandatory_for_service; // Default to mandatory if not present
+        }
+    });
+    initPreferenceCenter(currentPreferences);
+    preferenceCenterOverlay.style.display = 'flex'; // Show preference center
+    cookieBanner.style.display = 'none'; // Hide banner
+};
+
+const handleSavePreferences = () => {
+    const preferences = {};
+    currentLanguageContent.data_processing_purposes.forEach(purpose => {
+        const toggle = document.getElementById(`toggle-${purpose.id}`);
+        if (toggle) {
+            preferences[purpose.id] = toggle.checked;
+        } else {
+            // For mandatory purposes that might not have a toggle (if applicable)
+            preferences[purpose.id] = purpose.is_mandatory_for_service;
+        }
+    });
+    saveConsentState(preferences, 'save_preferences_center');
+    preferenceCenterOverlay.style.display = 'none'; // Hide preference center
+};
+
+openCookieSettingsLink.addEventListener('click', (e) => {
+    e.preventDefault(); // Prevent page jump
+    handleManagePreferences(); // Re-use manage preferences logic
+});
+
+// --- Initialization ---
+async function initConsentManager() {
+    currentPolicy = await fetchConsentPolicy();
+    if (!currentPolicy) {
+        console.error("Consent Manager cannot initialize: Policy not loaded.");
+        return; // Cannot proceed without policy
+    }
+
+    const langCode = getPreferredLanguage();
+    currentLanguageContent = currentPolicy.languages[langCode];
+    if (!currentLanguageContent) {
+        console.error(`No content for language ${langCode}. Defaulting to first available.`);
+        currentLanguageContent = currentPolicy.languages[Object.keys(currentPolicy.languages)[0]]; // Fallback
+    }
+    document.documentElement.lang = langCode; // Set page lang for accessibility
+
+    // Prepare a map for quick lookup of purpose configs
+    currentLanguageContent.data_processing_purposes.forEach(p => {
+        consentCategoriesConfig[p.id] = p;
+    });
+
+    renderCookieBanner(); // Render banner content dynamically
+    renderPreferenceCenter(); // Render preference center content dynamically
+
+    const currentConsent = getConsentState();
+
+    if (currentConsent) {
+        // Consent found and not expired/policy changed, apply directly
+        applyConsent(currentConsent);
+    } else {
+        // No consent or expired/policy changed, show banner
+        cookieBanner.style.display = 'flex';
+        // For fresh visit, ensure all non-mandatory scripts are initially blocked
+        const initialBlockedPreferences = {};
+        currentLanguageContent.data_processing_purposes.forEach(purpose => {
+            initialBlockedPreferences[purpose.id] = purpose.is_mandatory_for_service;
+        });
+        applyConsent(initialBlockedPreferences);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initConsentManager);

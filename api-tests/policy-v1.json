@@ -16,7 +16,7 @@
     "en": {
       "title": "TSI Coop Website Data & Privacy Policy",
       "introduction": "At TSI Coop, we are committed to transparently collecting and processing your personal data to provide and improve our services for businesses and professionals. This policy details what data we collect, why, and how it's used, in full compliance with the Digital Personal Data Protection Act, 2023. Your privacy choices are important to us.",
-      "general_purpose_description": "We collect data for account management, website functionality, service delivery, analytics, engagement tracking, and to improve our offerings and assessments.",
+      "general_purpose_description": "We collect data for account management, website functionality, service delivery, analytics, engagement and to improve our offerings and assessments.",
       "data_processing_purposes": [
         {
           "id": "purpose_account_management",

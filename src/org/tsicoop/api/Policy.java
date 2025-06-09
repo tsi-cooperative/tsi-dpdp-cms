@@ -22,7 +22,14 @@ public class Policy implements REST {
 
     @Override
     public void get(HttpServletRequest req, HttpServletResponse res) {
-
+        JSONObject output = null;
+        JSONObject input = new JSONObject();
+        if(req.getParameter("policy_id")!=null)
+            input.put("policy_id",req.getParameter("policy_id"));
+        if(req.getParameter("fiduciary_id")!=null)
+            input.put("fiduciary_id",req.getParameter("fiduciary_id"));
+        output = getPolicy(input);
+        OutputProcessor.send(res, HttpServletResponse.SC_OK, output);
     }
 
     @Override

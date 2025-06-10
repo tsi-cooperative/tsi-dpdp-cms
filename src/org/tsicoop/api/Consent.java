@@ -51,6 +51,9 @@ public class Consent implements REST {
                     String ipaddress = getClientIpAddress(req);
                     output = recordConsent(input, ipaddress);
                 }
+                else if(func.equalsIgnoreCase(LINK_PRINCIPAL)){
+                    output = linkPrincipal(input);
+                }
             }
             if(outputArray != null)
                 OutputProcessor.send(res, HttpServletResponse.SC_OK, outputArray);
@@ -120,6 +123,30 @@ public class Consent implements REST {
         }else {
             output.put("_added", false);
         }
+        return output;
+    }
+
+    protected JSONObject linkPrincipal(JSONObject input){
+        JSONObject output = new JSONObject();
+        String consentId = null;
+        String principalId = null;
+
+        try {
+            JSONObject principalOb = new DataPrincipal().getDataPrincipal(input);
+            consentId = (String) input.get("consent_id");
+            principalId = (String) principalOb.get("principal_id");
+
+            Connection conn = new PoolDB().getConnection();
+            String usql = "update _consent set principal_id=?, last_updated_at = NOW() WHERE consent_id = ?";
+            PreparedStatement ustmt = conn.prepareStatement(usql);
+            ustmt.setObject(1, UUID.fromString(principalId));
+            ustmt.setObject(2, UUID.fromString(consentId));
+            ustmt.executeUpdate();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        output.put("principal_id",principalId);
+        output.put("consent_id",consentId);
         return output;
     }
 

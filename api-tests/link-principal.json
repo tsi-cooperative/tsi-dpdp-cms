@@ -1,6 +1,8 @@
 {
-  "_func": "record_principal",
-  "consent_id": "",
-  "email": "",
-  "mobile": ""
+  "_func": "link_principal",
+  "fiduciary_id": "bfa42245-214a-45e3-bdb4-53c34404bc62",
+  "consent_id": "3317d7ca-bcfd-4e94-89b9-ed3e4cfab02b",
+  "name": "Satish",
+  "email": "satish@tsiconsulting.in",
+  "mobile": "1111111111"
 }

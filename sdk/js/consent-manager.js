@@ -60,6 +60,16 @@ async function fetchConsentPolicy() {
 }
 
 /**
+* Get Principal Id
+*
+*/
+async function fetchConsentPolicy(name,email,mobile) {
+   // call the get_data_principal api
+   // store the principal id in the LocalStorage
+   // Now, resend the consent again to the backend along with the principal id
+}
+
+/**
  * Gets consent state from local storage.
  * @returns {Object|null} Current consent preferences or null if not found/expired.
  */
@@ -124,6 +134,7 @@ async function invokeBackendConsentAPI(preferences, mechanism) {
     const consentPayload = {
         _func:'record_consent',
         user_id: userId,
+        principal_id:// get it from storage
         fiduciary_id: currentPolicy.data_fiduciary_info.id || 'bfa42245-214a-45e3-bdb4-53c34404bc62', // Ensure your policy JSON has Fiduciary ID
         policy_id: currentPolicy.policy_id || '093b9a9e-b739-40c6-9fed-6ae190fbea70',
         policy_version: currentPolicy.version,

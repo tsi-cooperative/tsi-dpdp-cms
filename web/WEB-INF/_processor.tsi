@@ -5,4 +5,5 @@
 # API Handlers
 /api/policy=org.tsicoop.api.Policy
 /api/consent=org.tsicoop.api.Consent
+/api/principal=org.tsicoop.api.DataPrincipal
 

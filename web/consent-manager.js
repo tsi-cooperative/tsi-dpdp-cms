@@ -22,6 +22,7 @@ const savePreferencesBtn = document.getElementById('save-preferences');
 const openCookieSettingsLink = document.getElementById('open-cookie-settings');
 const viewPreferencesLink = document.getElementById('view-preferences'); // New: Link for viewing preferences
 const addPostLink = document.getElementById('validate-add-post'); // New: Link for Add Post functionality
+const providerZoneLink = document.getElementById('validate-provider-zone'); // New: Link for Provider Zone functionality
 
 
 // --- Helper Functions ---
@@ -381,6 +382,56 @@ function validateAddPostAccess() {
     document.body.insertAdjacentHTML('beforeend', displayHtml);
 }
 
+// --- New Function: Validate ProviderZone Access ---
+function validateProviderZoneAccess() {
+    const currentPreferences = getConsentState();
+    const showcasePurposeId = "purpose_solution_service_training_showcase"; // ID from your policy JSON
+
+    // Safely check if the preference exists and is true
+    const isShowcaseConsentGranted = currentPreferences && currentPreferences[showcasePurposeId] === true;
+
+    let messageTitle;
+    let messageBody;
+    let actionButtonHtml = '';
+
+    if (isShowcaseConsentGranted) {
+        messageTitle = "Access Granted!";
+        messageBody = "You are eligible to access the Provider Zone as your 'Product & Service Showcase Personalization' preference is enabled.";
+        actionButtonHtml = `
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="alert('Proceeding to Provider Zone!'); document.getElementById('custom-message-modal-overlay').remove();"
+                        style="background-color: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                    Proceed to Provider Zone
+                </button>
+            </div>
+        `;
+    } else {
+        messageTitle = "Access Denied";
+        messageBody = "You are not eligible to access the Provider Zone. To enable this feature, please update your consent preferences for 'Product & Service Showcase Personalization'.";
+        actionButtonHtml = `
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="document.getElementById('preference-center-overlay').style.display='flex'; document.getElementById('custom-message-modal-overlay').remove();"
+                        style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                    Manage Preferences
+                </button>
+            </div>
+        `;
+    }
+
+    let displayHtml = `
+        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1003;" id="custom-message-modal-overlay">
+            <div style="background-color: white; padding: 20px; border-radius: 8px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; font-family: Arial, sans-serif; color: #333;">
+                <button style="float: right; background: none; border: none; font-size: 1.5em; cursor: pointer; color: #555;" onclick="document.getElementById('custom-message-modal-overlay').remove();">&times;</button>
+                <h2>${messageTitle}</h2>
+                <p style="font-size: 1em; text-align: center; margin-top: 15px;">${messageBody}</p>
+                ${actionButtonHtml}
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', displayHtml);
+}
+
+
 
 // --- Event Handlers ---
 
@@ -462,6 +513,14 @@ if (addPostLink) {
     addPostLink.addEventListener('click', (e) => {
         e.preventDefault(); // Prevent default link behavior
         validateAddPostAccess(); // Call our new validation function
+    });
+}
+
+// Add event listener for "Provider Zone" link
+if (providerZoneLink) {
+    providerZoneLink.addEventListener('click', (e) => {
+        e.preventDefault(); // Prevent default link behavior
+        validateProviderZoneAccess(); // Call our new validation function
     });
 }
 

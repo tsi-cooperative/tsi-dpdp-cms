@@ -29,6 +29,7 @@ public class Policy implements REST {
         if(req.getParameter("fiduciary_id")!=null)
             input.put("fiduciary_id",req.getParameter("fiduciary_id"));
         output = getPolicy(input);
+       // System.out.println(output);
         OutputProcessor.send(res, HttpServletResponse.SC_OK, output);
     }
 

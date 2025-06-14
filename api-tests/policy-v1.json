@@ -1,6 +1,6 @@
 {
   "_func": "add_policy",
-  "fiduciary_id": "4b11744a-2fdf-4e99-be87-654887f5834e",
+  "fiduciary_id": "bfa42245-214a-45e3-bdb4-53c34404bc62",
   "name": "tsi_coop_policy",
   "version": "1.0",
   "effective_date": "2025-06-03 00:00:00",
@@ -16,7 +16,7 @@
     "en": {
       "title": "TSI Coop Website Data & Privacy Policy",
       "introduction": "At TSI Coop, we are committed to transparently collecting and processing your personal data to provide and improve our services for businesses and professionals. This policy details what data we collect, why, and how it's used, in full compliance with the Digital Personal Data Protection Act, 2023. Your privacy choices are important to us.",
-      "general_purpose_description": "We collect data for account management, website functionality, service delivery, analytics, engagement and to improve our offerings and assessments.",
+      "general_purpose_description": "We collect data for Account Registration & Management, Website Analytics & Performance, Community Engagement, Solutions and Services Showcase, Maturity Assessments and Member Support",
       "data_processing_purposes": [
         {
           "id": "purpose_account_management",
@@ -53,7 +53,7 @@
         },
         {
           "id": "purpose_solution_service_training_showcase",
-          "name": "Solutions, Service & Training Showcase",
+          "name": "Solutions and Services Showcase",
           "description": "Your products and services that will help the MSMEs & Professionals to discover and benefit",
           "legal_basis": "Consent (DPDP Act, Section 6(1)(a))",
           "data_categories_involved": ["solution_details", "service_details", "training_details"],
@@ -64,7 +64,7 @@
         },
         {
           "id": "purpose_maturity_capability_assessment",
-          "name": "Digital Maturity Assessment for businesses & Capability Assessment for providers",
+          "name": "Maturity Assessments",
           "description": "To capture your responses to surveys on organization processes and tools, providing you with insights into your digital maturity & capability. Results may be used in an aggregated, anonymized form for industry trends.",
           "legal_basis": "Consent (DPDP Act, Section 6(1)(a))",
           "data_categories_involved": ["assessment_responses", "business_name", "industry_type", "organization_type"],
@@ -75,7 +75,7 @@
         },
         {
           "id": "purpose_consultation_grievance_support_interactions",
-          "name": "For community support",
+          "name": "Member Support",
           "description": "For receiving consulting support",
           "legal_basis": "Consent (DPDP Act, Section 6(1)(a))",
           "data_categories_involved": ["grievance_note", "support_request","advise_request"],
@@ -227,7 +227,7 @@
       },
       "links": {
         "full_privacy_policy_text": "Full Privacy Policy",
-        "full_privacy_policy_url": "https://www.tsicoop.com/privacy-policy-en",
+        "full_privacy_policy_url": "https://tsicoop.org",
         "terms_of_service_text": "Terms of Service",
         "terms_of_service_url": "https://www.tsicoop.com/terms-of-service-en"
       },

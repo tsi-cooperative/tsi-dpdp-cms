@@ -48,7 +48,7 @@
           "data_categories_involved": ["post", "meeting_invite", "enquiry", "rfp", "testimonial","discussion"],
           "recipients_or_third_parties": [],
           "retention_period": "Up to 5 years from last engagement, or until consent withdrawal.",
-          "is_mandatory_for_service": true,
+          "is_mandatory_for_service": false,
           "is_sensitive": false
         },
         {

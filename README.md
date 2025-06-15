@@ -5,6 +5,6 @@ Note: The solution is currently at a prototype stage
 
 ## Demos
 
-1. [TSI DPDP CMS Client - Interactive Tour](https://dpdp-cms.tsicoop.org){:target="_blank"}
+1. [TSI DPDP CMS Client - Interactive Tour](https://dpdp-cms.tsicoop.org)
 2. Low Fidelity - System Installation Process
 

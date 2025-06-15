@@ -23,7 +23,29 @@ const openCookieSettingsLink = document.getElementById('open-cookie-settings');
 const viewPreferencesLink = document.getElementById('view-preferences'); // New: Link for viewing preferences
 const addPostLink = document.getElementById('validate-add-post'); // New: Link for Add Post functionality
 const providerZoneLink = document.getElementById('validate-provider-zone'); // New: Link for Provider Zone functionality
+const linkPrincipalLink = document.getElementById('link-principal'); // New: Link for Link Principal functionality
 
+// --- Generic Modal Display Function (MOVED TO TOP OF HELPERS) ---
+function displayCustomModal(title, bodyHtml, actionButtonHtml = '') {
+    // Remove any existing custom modal before displaying a new one
+    const existingModal = document.getElementById('custom-message-modal-overlay');
+    if (existingModal) {
+        existingModal.remove();
+    }
+
+    let modalHtml = `
+        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1003;" id="custom-message-modal-overlay">
+            <div style="background-color: white; padding: 20px; border-radius: 8px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; font-family: Arial, sans-serif; color: #333;">
+                <button style="float: right; background: none; border: none; font-size: 1.5em; cursor: pointer; color: #555;" onclick="document.getElementById('custom-message-modal-overlay').remove();">&times;</button>
+                <h2>${title}</h2>
+                <p style="font-size: 1em; text-align: center; margin-top: 15px;">${bodyHtml}</p>
+                ${actionButtonHtml}
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+// --- END Generic Modal Display Function ---
 
 // --- Helper Functions ---
 
@@ -431,6 +453,138 @@ function validateProviderZoneAccess() {
     document.body.insertAdjacentHTML('beforeend', displayHtml);
 }
 
+// --- Link Principal Function ---
+async function initiateLinkPrincipalFlow() {
+     const principalId = localStorage.getItem('tsi_coop_principal_id');
+     console.log(principalId);
+    // --- New check: If no anonymous ID, display a message and stop ---
+    if (!principalId === false) {
+        displayCustomModal(
+                   "Account Already Linked!",
+                   "Your browser's privacy choices are currently associated with a Data Principal ID",
+                   `<div style="text-align: center; margin-top: 20px;">
+                       <button onclick="document.getElementById('custom-message-modal-overlay').remove();"
+                               style="background-color: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                           Close
+                       </button>
+                   </div>`
+               );
+        return; // Stop execution of the function
+    }
+    // --- End new check ---
+
+    const anonymousUserId = localStorage.getItem('tsi_coop_user_id');
+    //console.log(anonymousUserId);
+    // --- New check: If no anonymous ID, display a message and stop ---
+    if (!anonymousUserId || anonymousUserId.startsWith('anon_') === false) { // Assuming anon IDs start with 'anon_'
+        displayCustomModal(
+            "No Anonymous ID to Link",
+            "There is no anonymous user ID found in your browser's local storage to link. This feature is for users who interacted with the site before logging in.",
+            `<div style="text-align: center; margin-top: 20px;">
+                <button onclick="document.getElementById('custom-message-modal-overlay').remove();"
+                        style="background-color: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                    Close
+                </button>
+            </div>`
+        );
+        return; // Stop execution of the function
+    }
+    // --- End new check ---
+
+    let modalTitle = "Link Your Account";
+    let modalBodyHtml = `
+        <p>To link your anonymous activity with your user account, please provide your name and email. This helps us consolidate your privacy choices.</p>
+        <div style="text-align: left; margin-top: 20px;">
+            <label for="link-name" style="display: block; margin-bottom: 5px; font-weight: bold;">Name:</label>
+            <input type="text" id="link-name" placeholder="Your Name" style="width: 100%; padding: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px;">
+            <label for="link-email" style="display: block; margin-bottom: 5px; font-weight: bold;">Email:</label>
+            <input type="email" id="link-email" placeholder="your.email@example.com" style="width: 100%; padding: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px;">
+            <p style="font-size: 0.8em; color: #888;">Your current anonymous ID: <strong>${anonymousUserId || 'Not set'}</strong></p>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button id="submit-link-principal" style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                Submit & Link Account
+            </button>
+        </div>
+    `;
+
+    displayCustomModal(modalTitle, modalBodyHtml);
+
+    const submitButton = document.getElementById('submit-link-principal');
+    if (submitButton) {
+        submitButton.onclick = async () => {
+            const name = document.getElementById('link-name').value;
+            const email = document.getElementById('link-email').value;
+
+            if (!name || !email) {
+                alert('Please enter both name and email.');
+                return;
+            }
+
+            // Display loading state
+            submitButton.disabled = true;
+            submitButton.textContent = 'Linking...';
+
+            try {
+                // --- Mock API Call ---
+                const mockPrincipalId = await mockLinkPrincipalApiCall(anonymousUserId, name, email);
+                // --- End Mock API Call ---
+
+                // Store the principal-id in local storage
+                localStorage.setItem('tsi_coop_principal_id', mockPrincipalId);
+                console.log(`Principal ID stored: ${mockPrincipalId}`);
+
+                // Update the modal to display the entire localStorage content
+                const currentLocalStorageContent = {};
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    currentLocalStorageContent[key] = localStorage.getItem(key);
+                }
+
+                const displayHtml = `
+                    <h2 style="color: #28a745;">Account Linked Successfully!</h2>
+                    <p style="font-size: 1em; text-align: center;">Your anonymous ID has been linked to your Data Principal ID: <strong>${mockPrincipalId}</strong></p>
+                    <p style="font-size: 0.9em; text-align: center; margin-top: 20px;">Current Local Storage Content:</p>
+                    <pre style="white-space: pre-wrap; word-wrap: break-word; text-align: left; background-color: #f0f0f0; padding: 10px; border-radius: 4px;">${JSON.stringify(currentLocalStorageContent, null, 2)}</pre>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button onclick="document.getElementById('custom-message-modal-overlay').remove();"
+                                style="background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                            Close
+                        </button>
+                    </div>
+                `;
+                // Replace content of the active modal
+                document.querySelector('#custom-message-modal-overlay div').innerHTML = displayHtml;
+
+                // In a real scenario, you'd also call your backend API to link the IDs
+                // on the server-side as per Functional Design: Link Principal.
+                // await fetch(`${API_BASE_URL}/consent/link-user`, {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify({ anonymous_user_id: anonymousUserId, authenticated_user_id: mockPrincipalId, name, email })
+                // });
+
+            } catch (error) {
+                console.error("Error during linking process:", error);
+                alert("Failed to link account. Please try again.");
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit & Link Account';
+            }
+        };
+    }
+}
+
+// --- Mock API Call for Linking ---
+async function mockLinkPrincipalApiCall(anonymousId, name, email) {
+    console.log(`MOCK API Call: Linking anonymous ID "${anonymousId}" with Name: "${name}", Email: "${email}"`);
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    // Simulate server-generated principal ID
+    const newPrincipalId = `auth_user_${email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '')}_${Math.random().toString(36).substring(2, 6)}`;
+    return newPrincipalId;
+}
+
+
 
 
 // --- Event Handlers ---
@@ -521,6 +675,14 @@ if (providerZoneLink) {
     providerZoneLink.addEventListener('click', (e) => {
         e.preventDefault(); // Prevent default link behavior
         validateProviderZoneAccess(); // Call our new validation function
+    });
+}
+
+// Add event listener for "Link Principal" link
+if (linkPrincipalLink) {
+    linkPrincipalLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        initiateLinkPrincipalFlow();
     });
 }
 

@@ -357,6 +357,23 @@ function displayCurrentPreferencesAsJson() {
 
 // --- New Function: Validate Add Post Access ---
 function validateAddPostAccess() {
+     const principalId = localStorage.getItem('tsi_coop_principal_id');
+     console.log(principalId);
+    // --- New check: If no anonymous ID, display a message and stop ---
+    if (principalId === null) {
+        displayCustomModal(
+                   "Link Principal!",
+                   "Your need to login/register first before you can add a post",
+                   `<div style="text-align: center; margin-top: 20px;">
+                       <button onclick="document.getElementById('custom-message-modal-overlay').remove();"
+                               style="background-color: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                           Close
+                       </button>
+                   </div>`
+               );
+        return; // Stop execution of the function
+    }
+
     const currentPreferences = getConsentState();
     const engagementPurposeId = "purpose_community_engagement"; // ID from your policy JSON
 
@@ -406,6 +423,23 @@ function validateAddPostAccess() {
 
 // --- New Function: Validate ProviderZone Access ---
 function validateProviderZoneAccess() {
+         const principalId = localStorage.getItem('tsi_coop_principal_id');
+         console.log(principalId);
+        // --- New check: If no anonymous ID, display a message and stop ---
+        if (principalId === null) {
+            displayCustomModal(
+                       "Link Principal!",
+                       "Your need to login/register first before accessing Provider Zone",
+                       `<div style="text-align: center; margin-top: 20px;">
+                           <button onclick="document.getElementById('custom-message-modal-overlay').remove();"
+                                   style="background-color: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                               Close
+                           </button>
+                       </div>`
+                   );
+            return; // Stop execution of the function
+        }
+
     const currentPreferences = getConsentState();
     const showcasePurposeId = "purpose_solution_service_training_showcase"; // ID from your policy JSON
 

@@ -612,7 +612,7 @@ async function initiateLinkPrincipalFlow() {
 async function mockLinkPrincipalApiCall(anonymousId, name, email) {
     console.log(`MOCK API Call: Linking anonymous ID "${anonymousId}" with Name: "${name}", Email: "${email}"`);
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise(resolve => setTimeout(resolve, 500));
     // Simulate server-generated principal ID
     const newPrincipalId = `auth_user_${email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '')}_${Math.random().toString(36).substring(2, 6)}`;
     return newPrincipalId;

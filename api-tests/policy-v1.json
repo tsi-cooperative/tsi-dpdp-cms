@@ -1,6 +1,6 @@
 {
   "_func": "add_policy",
-  "fiduciary_id": "bfa42245-214a-45e3-bdb4-53c34404bc62",
+  "fiduciary_id": "4b11744a-2fdf-4e99-be87-654887f5834e",
   "name": "tsi_coop_policy",
   "version": "1.0",
   "effective_date": "2025-06-03 00:00:00",
@@ -16,7 +16,7 @@
     "en": {
       "title": "TSI Coop Website Data & Privacy Policy",
       "introduction": "At TSI Coop, we are committed to transparently collecting and processing your personal data to provide and improve our services for businesses and professionals. This policy details what data we collect, why, and how it's used, in full compliance with the Digital Personal Data Protection Act, 2023. Your privacy choices are important to us.",
-      "general_purpose_description": "We collect data for Account Registration & Management, Website Analytics & Performance, Community Engagement, Solutions and Services Showcase, Maturity Assessments and Member Support",
+      "general_purpose_description": "We collect data for Account Registration & Management, Website Analytics & Performance, Community Engagement, Solutions and Services Showcase and Digital Maturity/Capability Assessments",
       "data_processing_purposes": [
         {
           "id": "purpose_account_management",
@@ -32,7 +32,7 @@
         {
           "id": "purpose_website_analytics",
           "name": "Website Analytics & Performance",
-          "description": "To understand how visitors use our website, which pages are most popular, and identify areas for improvement. This helps us enhance your Browse experience and site performance.",
+          "description": "To understand how visitors use our website, which pages are most popular, and identify areas for improvement. This helps us enhance your browse experience and site performance.",
           "legal_basis": "Consent (DPDP Act, Section 6(1)(a))",
           "data_categories_involved": ["website_usage_data", "device_info"],
           "recipients_or_third_parties": ["Google Analytics"],
@@ -43,7 +43,7 @@
         {
           "id": "purpose_community_engagement",
           "name": "Community Engagement",
-          "description": "Your community interactions such as technical posts, meetings/webinars invite, enquiries, RFPs, and testimonials. This helps us provide the engagement for various stakeholders",
+          "description": "Your community interactions such as technical posts, meetings/webinars invite, enquiries, RFPs, testimonials, upport request and grievances. This helps us offer stakeholder collaboration in the MSME tech ecosystem",
           "legal_basis": "Consent (DPDP Act, Section 6(1)(a))",
           "data_categories_involved": ["post", "meeting_invite", "enquiry", "rfp", "testimonial","discussion"],
           "recipients_or_third_parties": [],
@@ -65,22 +65,11 @@
         {
           "id": "purpose_maturity_capability_assessment",
           "name": "Maturity Assessments",
-          "description": "To capture your responses to surveys on organization processes and tools, providing you with insights into your digital maturity & capability. Results may be used in an aggregated, anonymized form for industry trends.",
+          "description": "Digital Maturity Assessments of businesses and Capability Maturity Assessment of local providers. This helps us offer Ratings & advise on areas of improvement.",
           "legal_basis": "Consent (DPDP Act, Section 6(1)(a))",
           "data_categories_involved": ["assessment_responses", "business_name", "industry_type", "organization_type"],
           "recipients_or_third_parties": ["TSI Coop Consulting Partners"],
           "retention_period": "5 years for individual responses, aggregated data retained indefinitely (anonymized).",
-          "is_mandatory_for_service": false,
-          "is_sensitive": false
-        },
-        {
-          "id": "purpose_consultation_grievance_support_interactions",
-          "name": "Member Support",
-          "description": "For receiving consulting support",
-          "legal_basis": "Consent (DPDP Act, Section 6(1)(a))",
-          "data_categories_involved": ["grievance_note", "support_request","advise_request"],
-          "recipients_or_third_parties": [],
-          "retention_period": "Until account deletion or consent withdrawal.",
           "is_mandatory_for_service": false,
           "is_sensitive": false
         }

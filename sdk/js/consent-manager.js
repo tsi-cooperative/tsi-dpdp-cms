@@ -452,7 +452,7 @@ function validateProviderZoneAccess() {
 
     if (isShowcaseConsentGranted) {
         messageTitle = "Access Granted!";
-        messageBody = "You are eligible to access the Provider Zone as your 'Product & Service Showcase Personalization' preference is enabled.";
+        messageBody = "You are eligible to access the Provider Zone as your 'Solutions & Services Showcase' preference is enabled.";
         actionButtonHtml = `
             <div style="text-align: center; margin-top: 20px;">
                 <button onclick="alert('Proceeding to Provider Zone!'); document.getElementById('custom-message-modal-overlay').remove();"
@@ -463,7 +463,7 @@ function validateProviderZoneAccess() {
         `;
     } else {
         messageTitle = "Access Denied";
-        messageBody = "You are not eligible to access the Provider Zone. To enable this feature, please update your consent preferences for 'Product & Service Showcase Personalization'.";
+        messageBody = "You are not eligible to access the Provider Zone. To enable this feature, please update your consent preferences for 'Solutions & Services Showcase'.";
         actionButtonHtml = `
             <div style="text-align: center; margin-top: 20px;">
                 <button onclick="document.getElementById('preference-center-overlay').style.display='flex'; document.getElementById('custom-message-modal-overlay').remove();"

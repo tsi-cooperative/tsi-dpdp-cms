@@ -6,5 +6,6 @@ Note: The solution is currently at a prototype stage
 ## Progress Update
 
 1. [TSI DPDP CMS Client - Interactive Tour](https://dpdp-cms.tsicoop.org)
-2. [Low Fidelity Design - CMS - Admin Onboarding](https://github.com/tsi-cooperative/tsi-dpdp-cms/blob/main/docs/TSI-DPDP-CMS-Admin-Onboarding-LoFi.pdf)
+2. [Low Fidelity Design - CMS - Admin Onboarding](https://github.com/tsi-cooperative/tsi-dpdp-cms/blob/main/docs/wireframes/TSI-DPDP-CMS-Admin-Onboarding-LoFi.pdf)
+3. [Low Fidelity Design - CMS - Consent Manager Onboarding](https://github.com/tsi-cooperative/tsi-dpdp-cms/blob/main/docs/wireframes/TSI-DPDP-CMS-Consent-Manager-Onboarding-LoFi.pdf)
 

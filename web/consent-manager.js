@@ -745,13 +745,15 @@ async function initConsentManager() {
     renderPreferenceCenter(); // Render preference center content dynamically
 
     const currentConsent = getConsentState();
-    console.log(currentConsent);
+
 
     if (currentConsent) {
         // Consent found and not expired/policy changed, apply directly
+        console.log('applying consent');
         applyConsent(currentConsent);
+        cookieBanner.style.display = 'none'; // Hide banner
     } else {
-
+        console.log('showing banner');
         // No consent or expired/policy changed, show banner
         cookieBanner.style.display = 'flex';
         // For fresh visit, ensure all non-mandatory scripts are initially blocked

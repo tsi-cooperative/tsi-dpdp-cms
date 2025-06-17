@@ -749,6 +749,7 @@ async function initConsentManager() {
     if (currentConsent) {
         // Consent found and not expired/policy changed, apply directly
         applyConsent(currentConsent);
+        cookieBanner.style.display = 'none'; // Hide banner
     } else {
         // No consent or expired/policy changed, show banner
         cookieBanner.style.display = 'flex';

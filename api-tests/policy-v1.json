@@ -1,7 +1,7 @@
 {
   "_func": "add_policy",
-  "fiduciary_id": "4b11744a-2fdf-4e99-be87-654887f5834e",
-  "name": "tsi_coop_policy",
+  "fiduciary_id": "2c7fc09d-a6f2-438c-94b9-8308fe3cbed5",
+  "name": "tsi_coop_policy_production",
   "version": "1.0",
   "effective_date": "2025-06-03 00:00:00",
   "last_updated": "2025-06-03 07:30:00",

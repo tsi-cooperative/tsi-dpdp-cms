@@ -229,7 +229,7 @@ function renderCookieBanner() {
     if (!currentLanguageContent || !cookieBanner) return;
 
     cookieBanner.innerHTML = `
-        <p>${currentLanguageContent.general_purpose_description} For more details, see our <a href="${currentLanguageContent.links.full_privacy_policy_url}" target="_blank" style="color: white; text-decoration: underline;">${currentLanguageContent.links.full_privacy_policy_text}</a>.</p>
+        <p>${currentLanguageContent.general_purpose_description}. Checkout <a href="https://tsicoop.org" target="_blank" style="color: yellow; text-decoration: underline;">live implementation</a>.</p>
         <br/><br/>
         <div class="button-group">
             <button id="accept-all-cookies">${currentLanguageContent.buttons.accept_all}</button>

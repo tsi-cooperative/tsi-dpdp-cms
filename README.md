@@ -1,7 +1,7 @@
 # TSI DPDP Consent Management System
 An open-source consent management system compliant with India's DPDP Act, 2023
 
-Note: The solution is currently at a prototype stage. Once the project is a bit stable with the minimum features needed to run a proper Consent Manager, we will share installation instructions for anyone to download and try it out. 
+Note: The solution is currently a prototype. Once we've stabilized the core features required for a robust Consent Manager, we'll provide installation instructions for you to download and try. 
 
 ## Progress Update
 

@@ -251,8 +251,10 @@ function renderPreferenceCenter() {
     if (!currentLanguageContent || !preferenceCenterContent) return;
 
     let categoriesHtml = `
-        <button style="position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 1.5em; cursor: pointer; color: #555;" onclick="document.getElementById('preference-center-overlay').style.display='none';">&times;</button>
-        <h2>${currentLanguageContent.title}</h2>
+       <div style="width:100%;display:flex;flex-direction:row;justify-content:flex-end;">
+       <button style="top: 15px; right: 15px; background: none; border: none; font-size: 1.5em; cursor: pointer; color: #555;" onclick="document.getElementById('preference-center-overlay').style.display='none';">&times;</button>
+       </div>
+       <h2>${currentLanguageContent.title}</h2>
         <p>${currentLanguageContent.general_purpose_description}</p>
         <p>${currentLanguageContent.important_note}</p>
         <div style="margin-top: 20px;">

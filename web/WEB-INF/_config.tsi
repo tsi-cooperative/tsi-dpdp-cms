@@ -2,7 +2,7 @@
 framework.db.host=jdbc:postgresql://localhost:5433
 framework.db.name=tsi_dpdp_cms
 framework.db.user=postgres
-framework.db.password=India2050
+framework.db.password=<<>>
 
 # Digitap
 digitap.apiurl=
